@@ -6,22 +6,22 @@
 void stampaGrafo();
 void allocaGrafo();
 void leggiGrafo();
-void leggiComando();
+void leggiComandi();
 void leggiPrimoComando();
+void calcolaPeso();
+void aggiornaTop();
+void stampaTopK();
 
 //variabili globali
 int **graph;
 int d;  //graph dimension
 int k;  //number of graph to show
-int fineFile = 0;
 
 int main() {
 
     leggiPrimoComando();
     allocaGrafo();
-    do {
-        leggiComando();
-    } while(fineFile == 0);
+    leggiComandi();
 }
 
 void leggiPrimoComando() {
@@ -32,7 +32,7 @@ void leggiPrimoComando() {
     printf("\nd = %d\nk = %d\n", d, k);
 }
 
-void leggiComando() {
+void leggiComandi() {
     char comando[15];
 
     while(fgets(comando, 15, stdin) != NULL ) {
@@ -49,8 +49,6 @@ void leggiComando() {
             printf("Comando non valido\n\n");
         }
     }
-    fineFile = 1;
-    return;
 }
 
 void allocaGrafo() {
@@ -60,7 +58,6 @@ void allocaGrafo() {
     }
     printf("Ho allocato un grafo %dx%d\n\n", d,d);
 }
-
 
 void stampaGrafo() {
 
@@ -88,7 +85,6 @@ void leggiGrafo() {
                 currNumberDigit = 0;
                 //Se è stata raggiunta la fine della riga
                 if(riga[currRowChar] == '\n') {
-
                     break;
                 }
                 currReadNumber++;
