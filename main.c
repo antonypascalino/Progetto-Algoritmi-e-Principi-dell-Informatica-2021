@@ -8,9 +8,10 @@ void allocaGrafo();
 void leggiGrafo();
 void leggiComandi();
 void leggiPrimoComando();
-void calcolaPeso();
-void aggiornaTop();
-void stampaTopK();
+//void calcolaPeso();
+//void aggiornaTop();
+//void stampaTopK();
+int fastAtoi(char numero[11]);
 
 //variabili globali
 int **graph;
@@ -18,7 +19,6 @@ int d;  //graph dimension
 int k;  //number of graph to show
 
 int main() {
-
     leggiPrimoComando();
     allocaGrafo();
     leggiComandi();
@@ -39,11 +39,12 @@ void leggiComandi() {
         if(strcmp(comando, "AggiungiGrafo\n") == 0) {
             printf("Ho letto AggiungiGrafo\n\n");
             leggiGrafo();
-            //Calcola peso, compara, aggiungi, elimina
+//            calcolaPeso();
+//            aggiornaTop();
         }
         else if(strcmp(comando, "TopK\n") == 0) {
             printf("Ho letto TopK\n\n");
-            //Stampa i top K grafi
+//            stampaTopK();
         }
         else {
             printf("Comando non valido\n\n");
@@ -76,11 +77,11 @@ void leggiGrafo() {
     int currRowChar = 0, currNumberDigit = 0, currReadNumber = 0;
 
     for(int rows = 0; rows < d; rows++) {
-        fgets(riga, (11 * d) + 1, stdin); //10 è il numero massimo di cifre che può avere un numero a 32 bit; 10+1=11 per la virgola che ogni numero ha, il +1 finale per il carattere \n
+        fgets(riga, 11 * d, stdin); //10 è il numero massimo di cifre che può avere un numero a 32 bit; 10+1=11 per la virgola (o \n) che ogni numero ha
         for(currRowChar = 0, currNumberDigit = 0, currReadNumber = 0;; currRowChar++) {
             if(riga[currRowChar] == ',' || riga[currRowChar] == '\n') {
                 //Converti e salva il numero con atoi
-                graph[rows][currReadNumber] = atoi(numero);
+                graph[rows][currReadNumber] = fastAtoi(numero);
                 memset(numero, '\0', 11);
                 currNumberDigit = 0;
                 //Se è stata raggiunta la fine della riga
@@ -96,4 +97,13 @@ void leggiGrafo() {
     }
     printf("Ho letto questo grafo:\n");
     stampaGrafo();
+}
+
+int fastAtoi(char numero[11]) {
+    int convertedNumber = 0;
+
+    for(int i = 0; numero[i]<='9' && numero[i]>='0'; i++) {
+        convertedNumber = convertedNumber*10 + numero[i]-48;
+    }
+    return convertedNumber;
 }
