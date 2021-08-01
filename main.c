@@ -19,16 +19,14 @@ void leggiPrimoComando();
 int calcolaPeso();
 struct Grafo* creaNodo(int peso);
 void aggiornaClassifica(struct Grafo* grafo);
-//void stampaClassifica();
+void stampaClassifica();
 int fastAtoi(char numero[11]);
 
 //variabili globali
 int **matrice;
-int *classifica;
 int d;  //graph dimension
 int k;  //number of graph to show
 int grafiLetti = 0;
-int topGrafo = -1; //Il grafo che attualmente ha il peso minore (variabile usata per capire se aggiungere in testa o meno)
 struct Grafo* testa = NULL;
 struct Grafo* curr;
 
@@ -58,7 +56,7 @@ void leggiComandi() {
         }
         else if(strcmp(comando, "TopK\n") == 0) {
             printf("Ho letto TopK\n\n");
-//            stampaTopK();
+            stampaClassifica();
         }
         else {
             printf("Comando non valido\n\n");
@@ -126,22 +124,24 @@ int calcolaPeso() {
     return grafiLetti;
 }
 
-struct Grafo* creaNodo(int peso)  {
+struct Grafo* creaNodo(int peso) {
     struct Grafo* nuovoGrafo;
 
     nuovoGrafo = (struct Grafo*)malloc(sizeof(struct Grafo));
     nuovoGrafo->indice = grafiLetti;
     nuovoGrafo->peso = peso;
+    printf("Ho creato un nuovo nodo\nPeso: %d\nIndice: %d\n", nuovoGrafo->peso, nuovoGrafo->indice);
     return nuovoGrafo;
 }
 
 void aggiornaClassifica(struct Grafo* nuovoGrafo) {
-    if(testa == NULL) {
+    if(testa == NULL || nuovoGrafo->peso < testa->peso) {
+        nuovoGrafo->next = testa;
         testa = nuovoGrafo;
     }
     else {
         curr = testa;
-        while(curr->next->peso <= nuovoGrafo->peso && curr->next != NULL) {
+        while(curr->next != NULL && curr->next->peso <= nuovoGrafo->peso) {
             curr = curr->next;
         }
         if(curr->next == NULL && grafiLetti < k) {
@@ -153,10 +153,28 @@ void aggiornaClassifica(struct Grafo* nuovoGrafo) {
         }
         else if(curr->next != NULL) {
             nuovoGrafo->next = curr->next;
-
+            curr->next = nuovoGrafo;
         }
     }
 }
+
+void stampaClassifica() {
+    curr = testa;
+
+    printf("La classifica al momento è:\n");
+    if(curr != NULL) {
+        printf("%d ", curr->indice);
+        while(curr->next != NULL) {
+            curr = curr->next;
+            printf("%d ", curr->indice);
+        }
+    }
+}
+
+
+
+
+
 
 
 
