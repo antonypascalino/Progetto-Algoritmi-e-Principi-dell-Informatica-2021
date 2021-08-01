@@ -126,7 +126,7 @@ int calcolaPeso() {
     return grafiLetti;
 }
 
-struct Grafo* creaNodo(int peso) {
+struct Grafo* creaNodo(int peso)  {
     struct Grafo* nuovoGrafo;
 
     nuovoGrafo = (struct Grafo*)malloc(sizeof(struct Grafo));
