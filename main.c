@@ -24,19 +24,18 @@ int fastAtoi(char numero[11]);
 
 //variabili globali
 int **matrice;
-int *classifica;
 int d;  //graph dimension
 int k;  //number of graph to show
 int grafiLetti = 0;
-int topGrafo = -1; //Il grafo che attualmente ha il peso minore (variabile usata per capire se aggiungere in testa o meno)
 struct Grafo* testa = NULL;
+struct Grafo* ultimo = NULL;
 struct Grafo* curr;
 
 int main() {
 
     int pesoTmp;
     struct Grafo* nuovoGrafo;
-    k = 10;
+    k = 5;
 
     while (1){
         printf("\nInserisci il peso del nodo\n");
@@ -148,24 +147,50 @@ struct Grafo* creaNodo(int peso) {
 
 void aggiornaClassifica(struct Grafo* nuovoGrafo) {
     if(testa == NULL || nuovoGrafo->peso < testa->peso) {
-        nuovoGrafo->next = testa;
-        testa = nuovoGrafo;
+        if(testa == NULL) {
+            testa = nuovoGrafo;
+            ultimo = nuovoGrafo;
+        } else {
+            testa->prev = nuovoGrafo;
+            nuovoGrafo->next = testa;
+            nuovoGrafo->prev = NULL;
+            testa = nuovoGrafo;
+        }
+        if(grafiLetti >= k) {
+            ultimo = ultimo->prev;
+            free(ultimo->next);
+            ultimo->next = NULL;
+        }
     }
     else {
         curr = testa;
+        //Scorro la lista fintanto che o arrivo alla fine o mi trovo nel posto in cui inserire il grafo.
         while(curr->next != NULL && curr->next->peso <= nuovoGrafo->peso) {
             curr = curr->next;
         }
+        //Se sono arrivato alla fine della lista e ho ancora spazio nella TopK, aggiungo il nuovoGrafo all fine
         if(curr->next == NULL && grafiLetti < k) {
             curr->next = nuovoGrafo;
             nuovoGrafo->next = NULL;
+            nuovoGrafo->prev = curr;
+            ultimo = nuovoGrafo;
         }
+        //Se sono arrivato alla fine della lista ma non ho più spazio nella TopK, vuol dire che il nuovoGrafo non ha posto in classifica, quindi non faccio niente
         else if(curr->next == NULL && grafiLetti >= k) {
             return;
         }
+        //Se non sono arrivato alla fine della lista vuol dire che devo aggiungere il grafo in mezzo alla lista
         else if(curr->next != NULL) {
             nuovoGrafo->next = curr->next;
+            nuovoGrafo->prev = curr;
+            curr->next->prev = nuovoGrafo;
             curr->next = nuovoGrafo;
+            //Se la classifica era piena, devo eliminare l'ultimo nodo e spostarlo
+            if(grafiLetti >= k) {
+                ultimo = ultimo->prev;
+                free(ultimo->next);
+                ultimo->next = NULL;
+            }
         }
     }
 }
