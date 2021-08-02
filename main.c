@@ -53,6 +53,7 @@ void leggiComandi() {
             printf("Ho letto AggiungiGrafo\n\n");
             leggiGrafo();
             aggiornaClassifica(creaNodo(calcolaPeso()));
+            stampaClassifica();
             grafiLetti++;
         }
         else if(strcmp(comando, "TopK\n") == 0) {
