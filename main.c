@@ -27,24 +27,14 @@ int **matrice;
 int d;  //graph dimension
 int k;  //number of graph to show
 int grafiLetti = 0;
+long *pesiTmp;
 struct Grafo* testa = NULL;
 struct Grafo* ultimo = NULL;
 struct Grafo* curr;
 
 int main() {
-
-    int pesoTmp;
-    struct Grafo* nuovoGrafo;
-    k = 5;
-
-    while (1){
-        printf("\nInserisci il peso del nodo\n");
-        scanf("%d", &pesoTmp);
-        nuovoGrafo = creaNodo(pesoTmp);
-        aggiornaClassifica(nuovoGrafo);
-        grafiLetti++;
-        stampaClassifica();
-    }
+    leggiPrimoComando();
+    leggiComandi();
 }
 
 void leggiPrimoComando() {
@@ -53,6 +43,8 @@ void leggiPrimoComando() {
     fgets(firstCommand, (10 * 2 + 2), stdin);
     sscanf(firstCommand, "%d %d", &d, &k);
     printf("\nd = %d\nk = %d\n", d, k);
+    allocaGrafo(); //alloco il grafo d*d
+    pesiTmp = malloc((d-1) * sizeof(long)); //alloco l'array che mi servirà per calcolare i pesi
 }
 
 void leggiComandi() {
@@ -132,7 +124,29 @@ int fastAtoi(char numero[11]) {
 }
 
 int calcolaPeso() {
-    return grafiLetti;
+    int pesoTotale = 0;
+    int pesoMinoreCurr = 4294967295;
+    int indicePesoMinore = 0;
+
+    memset(pesiTmp, '0', d-1);
+
+    for(int row = indicePesoMinore;;) {
+        pesoMinoreCurr=0;
+        //copio tutti i pesi per raggiungere tutti i nodi direttamente raggiungibili dalla radice
+        for(int col = 1; col < d; col++) {
+            if(matrice[0][col] + pesoMinoreCurr > 0 && matrice[0][col] + pesoMinoreCurr < pesiTmp[col-1]) {
+                pesiTmp[col-1] = matrice[0][col] + pesoMinoreCurr;
+            }
+            if(pesiTmp[col-1] < pesoMinoreCurr && pesiTmp[col-1] > 0) {
+                pesoMinoreCurr = pesiTmp[col];
+                indicePesoMinore = col;
+            }
+        }
+    }
+
+
+    printf("Il peso del grafo è: %d\n", pesoTotale);
+    return pesoTotale;
 }
 
 struct Grafo* creaNodo(int peso) {
