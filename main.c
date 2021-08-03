@@ -11,7 +11,6 @@ struct Grafo {
 };
 
 //funzioni
-void stampaGrafo();
 void allocaGrafo();
 void leggiGrafo();
 void leggiComandi();
@@ -29,7 +28,6 @@ int k;  //number of graph to show
 int grafiLetti = 0;
 long *pesiTmp;
 int *visited;
-int *pred;
 char *riga;
 struct Grafo* testa = NULL;
 struct Grafo* ultimo = NULL;
@@ -45,14 +43,12 @@ void leggiPrimoComando() {
 
     if(fgets(firstCommand, (10 * 2 + 2), stdin) != NULL);
     sscanf(firstCommand, "%d %d", &d, &k);
-//    printf("\nd = %d\nk = %d\n", d, k);
     allocaGrafo(); //alloco il grafo d*d
 
     //alloco tutti gli array usiliari che mi serviranno per calcolare il peso del grafo
     //li alloco qua e non in calcolaPeso() in modo tale da chiamare una sola volta malloc
     pesiTmp = malloc((d) * sizeof(long)); //alloco l'array che mi servirà per calcolare i pesi
     visited = malloc((d) * sizeof(int));
-    pred = malloc((d) * sizeof(int));
     riga = malloc(11 * d + 1 *sizeof(int)); //alloca la stringa per leggere l'input
 }
 
@@ -61,13 +57,11 @@ void leggiComandi() {
 
     while(fgets(comando, 15, stdin) != NULL ) {
         if(strcmp(comando, "AggiungiGrafo\n") == 0) {
-            //printf("Ho letto AggiungiGrafo\n\n");
             leggiGrafo();
             aggiornaClassifica(creaNodo(calcolaPeso()));
             grafiLetti++;
         }
         else if(strcmp(comando, "TopK\n") == 0) {
-            //printf("Ho letto TopK\n\n");
             stampaClassifica();
         }
         else {
@@ -81,17 +75,6 @@ void allocaGrafo() {
     for(int i = 0; i < d; ++i) {
         matrice[i] = (unsigned int *) malloc(d * sizeof(unsigned int));
     }
-//    printf("Ho allocato un grafo %dx%d\n\n", d,d);
-}
-
-void stampaGrafo() {
-    for(int row = 0; row < d; row++) {
-        for(int col = 0; col < d; col++) {
-            printf("%d ", matrice[row][col]);
-        }
-        printf("\n");
-    }
-    printf("Ho letto il grafo: %d\n", grafiLetti);
 }
 
 void leggiGrafo() {
@@ -121,8 +104,6 @@ void leggiGrafo() {
             }
         }
     }
-    //printf("Ho letto questo grafo:\n");
-    //stampaGrafo();
 }
 
 unsigned int fastAtoi(char numero[11]) {
@@ -144,7 +125,6 @@ long calcolaPeso() {
     for(int col = 0; col < d; col++) {
         pesiTmp[col] = matrice[0][col];
         visited[col] = 0;
-        pred[col]= 0;
     }
     visited[0] = 1; //Nodo sorgente già visitato
     pesiTmp[0] = 0; //Distanza nodo sorgente da nodo sorgente = 0
@@ -164,13 +144,11 @@ long calcolaPeso() {
             if(!visited[i]) {
                 if(matrice[indicePesoMinore][i]!=0 && (pesoMinoreCurr+matrice[indicePesoMinore][i] < pesiTmp[i] || pesiTmp[i] == 0)) {
                     pesiTmp[i] = pesoMinoreCurr+matrice[indicePesoMinore][i];
-                    pred[i] = indicePesoMinore;
                 }
             }
         }
         nodi++;
     }
-
     //Calcolo la somma di tutti i cammini minimi
     for(int i = 0; i < d; i++) {
         pesoTotale += pesiTmp[i];
@@ -185,7 +163,6 @@ struct Grafo* creaNodo(unsigned int peso) {
     nuovoGrafo = (struct Grafo*)malloc(sizeof(struct Grafo));
     nuovoGrafo->indice = grafiLetti;
     nuovoGrafo->peso = peso;
-    //printf("Ho creato un nuovo nodo\nPeso: %d\nIndice: %d\n", nuovoGrafo->peso, nuovoGrafo->indice);
     return nuovoGrafo;
 }
 
@@ -242,7 +219,6 @@ void aggiornaClassifica(struct Grafo* nuovoGrafo) {
 void stampaClassifica() {
     curr = testa;
 
-//    printf("La classifica al momento è:\n");
     if(curr != NULL) {
         printf("%d", curr->indice);
         while(curr->next != NULL) {
