@@ -153,7 +153,6 @@ long calcolaPeso() {
     for(int i = 0; i < d; i++) {
         pesoTotale += pesiTmp[i];
     }
-    //printf("Il peso del grafo è: %d\n\n", pesoTotale);
     return pesoTotale;
 }
 
@@ -225,8 +224,8 @@ void stampaClassifica() {
             curr = curr->next;
             printf(" %d", curr->indice);
         }
-        printf("\n");
     }
+    printf("\n");
 }
 
 
